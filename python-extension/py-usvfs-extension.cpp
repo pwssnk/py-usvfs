@@ -168,7 +168,7 @@ PYBIND11_MODULE(_usvfs_dll, m) {
 		.value("ERROR", LogLevel::Error)
 		.value("WARNING", LogLevel::Warning);
 
-	// Export CrashDumptsType enum
+	// Export CrashDumpsType enum
 	py::enum_<CrashDumpsType>(m, "CrashDumpsType")
 		.value("FULL", CrashDumpsType::Full)
 		.value("MINI", CrashDumpsType::Mini)
