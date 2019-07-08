@@ -2,21 +2,30 @@
 Python bindings for the userspace virtual filesystem ([usvfs](https://github.com/ModOrganizer2/usvfs/)) library
 
 ### What is usvfs?
-TODO
+To quote the devs:
+>USVFS (short for User Space Virtual File System) aims to allow windows applications to create file or directory links that are visible to only a select set of processes. It does so by using api hooking to fool file access functions into discovering/opening files that are in fact somewhere else
+
+usvfs was originally written by [TanninOne](https://github.com/TanninOne/usvfs) as a part of [ModOrganizer](https://github.com/TanninOne/modorganizer), a mod manager application for various pc games (notably Bethesda titles). Development of ModOrganizer and usvfs was continued by the [ModOrganizer2](https://github.com/ModOrganizer2) team. 
+usvfs is a core component of ModOrganizer. It is what allows ModOrganizer to easily install and uninstall mods without having to constantly move gigabytes of data on disk, and what gives it control over what happens when multiple mods override the same file.
+
+However, usvfs was designed to also be usable as a standalone library. That's great, because this kind of functionality has a variety of interesting applications.
 
 ### What is py-usvfs?
-TODO
+usvfs is written in C++. It needs to be, because it needs to perform low level tasks like hooking Windows API I/O function calls and injecting processes. I saw use in usvfs for some personal projects, but I usually prefer to work in higher level languages -- Python first and foremost. py-usvfs aims to make that possible.
 
-### Why is this useful?
-TODO
+py-usvfs is two things:
+a. Python bindings for the usvfs dll functionality, in the form of a pybind11 CPython extension
+b. A Python wrapper module that provides convenient, hopefully more Pythonic abstractions for that low level functionality
+
+Basically, it's intended to allow to use usvfs in python (a) and make using it less of a pain (b).
 
 ### Can I use this in a production environment?
 Can you? Well, I'm not your mother. Should you? Probably not. usvfs is finicky, not always reliable and poorly documented. py-usvfs is no different. Caveat emptor.
 
-
+Proper documentation for py-usvfs is on my to-do list, although it doesn't help that usvfs itself lacks proper documentation. For now, you'll have to resort to source code peeping.
 
 ## Requirements
-Because usvfs works by hooking Windows API I/O functions, it only runs on Windows machines. Consequently, py-usvfs only runs on Windows as well.
+Because usvfs works by hooking Windows API I/O function calls, it only runs on Windows machines. Consequently, py-usvfs only runs on Windows as well.
 Becuase py-usvfs exposes the functionality in `usvfs_[x86|x64].dll` via a CPython extension, it will only run on the official CPython implementation of Python. 
 
 The requirements therefore are:
@@ -24,10 +33,9 @@ The requirements therefore are:
 * CPython 3.7.x (32-bits or 64-bits)
 
 
-
 ## Installation
 ### Install pre-built packages using pip
-A plug-n-play Python package is available from [PyPI](https://pypi.org/). Use pip to install.
+Pre-built Python packages are available from [PyPI](https://pypi.org/). Use pip to install.
 
 ```shell
 pip install py-usvfs
@@ -43,7 +51,6 @@ Alternatively, you can build the required components from source code. No detail
 4. Build `python-extension` in Release/win32 and Release/x64 configurations using MSVC
 5. Run `./build-wheels.bat` to build Python wheel packages for 64-bits and 32-bits CPython
 6. You can now install the .whl files in `dist/` using `pip install [wheelname].whl`
-
 
 
 ## Basic usage
@@ -116,10 +123,11 @@ usvfs.dll.USVFSParameters()
 usvfs.dll.CreateVFS(...)
 # etc...
 ```
-This exposes most functions, structs and properties exported by `usvfs_[x86|x64].dll` (but not the debugging stuff). The function signatures in Python are the same as in C++, but you can pass basic Python types as arguments and you don't have to deal with buffer `wchar[]`'s. See the [usvfs header file](https://github.com/pwssnk/py-usvfs/blob/master/python-extension/usvfs/include/usvfs.h) for a list of the available functions and a (not particularly useful) explanation of what they do.
+This exposes most functions, structs and properties exported by `usvfs_[x86|x64].dll` (but not the debugging stuff). The function signatures in Python are similar to those in the usvfs C++ headers, but you can pass basic Python types as arguments and you don't have to deal with buffer `wchar[]`'s. See the [usvfs header file](https://github.com/pwssnk/py-usvfs/blob/master/python-extension/usvfs/include/usvfs.h) for a list of the available functions and a (not particularly useful) explanation of what they do.
 
 The exception here is `usvfs.dll.CreateProcessHooked()`. In C/C++ calls directly to the usvfs dll, you would have to pass a bunch of Windows API nonsense to the function and deal with Windows handles. The py-usvfs CPython extension takes care of that for you, because (a) it's convenient and (b) exposing all the required Windows API stuff to Python would be a pain. The downside is that you don't have easy access to the newly spawned process status and input/output via Windows handles.
 `CreateProcessHooked()` in py-usvfs takes two arguments: a `str` containing executable path and any command line arguments to pass to it, and a `str` with a path to the intended working directory for the new process.
+
 
 ## License
 (c) 2019 pwssnk -- Code available under GPL v3 license
