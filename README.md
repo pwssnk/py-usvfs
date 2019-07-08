@@ -22,7 +22,7 @@ Basically, it's intended to allow to use usvfs in python (a) and make using it l
 ### Can I use this in a production environment?
 Can you? Well, I'm not your mother. Should you? Probably not. usvfs is finicky, not always reliable and poorly documented. py-usvfs is no different. Caveat emptor.
 
-Proper documentation for py-usvfs is on my to-do list, although it doesn't help that usvfs itself lacks proper documentation. For now, you'll have to resort to source code peeping.
+py-usvfs is NOT properly tested. No guarantuee given that anything will work.
 
 ## Requirements
 Because usvfs works by hooking Windows API I/O function calls, it only runs on Windows machines. Consequently, py-usvfs only runs on Windows as well.
@@ -51,6 +51,10 @@ Alternatively, you can build the required components from source code. No detail
 4. Build `python-extension` in Release/win32 and Release/x64 configurations using MSVC
 5. Run `./build-wheels.bat` to build Python wheel packages for 64-bits and 32-bits CPython
 6. You can now install the .whl files in `dist/` using `pip install [wheelname].whl`
+
+
+## Documentation
+Currently, no extensive documentation is available. Please refer to the source code and Python docstrings. See below for a basic usage example.
 
 
 ## Basic usage
