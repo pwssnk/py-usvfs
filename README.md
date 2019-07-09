@@ -99,10 +99,15 @@ vfs = usvfs.UserspaceVFS()   # Create a usvfs controller with default instance n
 vfs.initialize()             # Initialize it
 vfs.set_mapping(vfs_map)     # Apply mapping
 
-# Now we can start a process in the vfs
-vfs.run_process('notepad.exe')  # Executable path + any command line arguments. 
-                                # Optionally, you can specify a working directory as the second argument 
-                                # (default = current working directory of your Python program)                                
+# Now we can start a process in the vfs using vfs.run_process(...)
+# This function takes three arguments:
+# 1. string containing executable path + any command line arguments 
+# 2. (optional) string specifying a working directory
+#    the default is the current working directory of your Python program
+# 3. (optional) bool specifying if this call should block execution
+#     until the child process finished (default is True)
+
+vfs.run_process('notepad.exe')
 
 # Usvfs will launch a usvfs_proxy process with the appropriate bitness, then 
 # start and inject the specified process
@@ -111,8 +116,6 @@ vfs.run_process('notepad.exe')  # Executable path + any command line arguments.
 
 # When you're done, be sure to clean up
 vfs.close()
-# You can do this whenever you want. If the process you started 
-# hasn't finished yet, the usvfs_proxy will stay alive until it does
 ```
 
 The Python wrapper classes hide some of the uglier usvfs wrangling in a clean, relatively easy to use API. If you want more low level access, you can call the usvfs dll (semi-)directly by accessing the functions defined in the `usvfs.dll` module.
