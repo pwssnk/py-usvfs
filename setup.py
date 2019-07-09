@@ -39,7 +39,7 @@ with open('README.md', 'r') as fh:
 
 setuptools.setup(
     name='py-usvfs',
-    version='0.1.0',
+    version='0.1.1',
     author='pwssnk',
     author_email='',
     description='Python bindings for the userspace virtual filesystem (usvfs) library',
