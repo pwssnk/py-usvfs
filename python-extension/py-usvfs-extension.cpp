@@ -73,7 +73,7 @@ vector<unsigned long> PyGetVFSProcessList()
 	return ret;
 }
 
-bool PyCreateProcessHooked(wstring& commandLineArguments, wstring& fullPathToWorkingDir)
+unsigned long PyCreateProcessHooked(wstring& commandLineArguments, wstring& fullPathToWorkingDir, bool blocking = true)
 {
 	/*
 		Paramaters for usvfs' CreateProcessHooked are the same as Windows' CreateProcess. See:
@@ -104,7 +104,25 @@ bool PyCreateProcessHooked(wstring& commandLineArguments, wstring& fullPathToWor
 		&pi                                                 // LPPROCESS_INFORMATION lpProcessInformation
 	);
 
-	// Close handles right away, won't be using them
+	if (!result)
+	{
+		// usvfs failed to start the process
+		// return 0. That's technically a valid Windows process id (System Idle Process), but for our purposes
+		// we can use it to indicate an error
+		return 0;
+	}
+
+	// Store process id
+	// Don't really need to cast this (DWORD is typedef'd as ulong), but it's clearer and the compiler won't mind
+	unsigned long processId = (unsigned long)pi.dwProcessId;
+
+	if (blocking)
+	{
+		// Wait for process we spawned to finish
+		WaitForSingleObject(pi.hProcess, INFINITE);
+	}
+
+	// Close handles
 	CloseHandle(si.hStdError);
 	CloseHandle(si.hStdInput);
 	CloseHandle(si.hStdOutput);
@@ -112,7 +130,7 @@ bool PyCreateProcessHooked(wstring& commandLineArguments, wstring& fullPathToWor
 	CloseHandle(pi.hThread);
 	CloseHandle(pi.hProcess);
 
-	return (bool)result;
+	return processId;
 }
 
 void PyBlacklistExecutable(const wstring& executableName)
@@ -207,7 +225,7 @@ PYBIND11_MODULE(_usvfs_dll, m) {
 	m.def("ClearVirtualMappings", &PyClearVirtualMappings);
 
 	m.def("CreateProcessHooked", &PyCreateProcessHooked, py::arg("commandLineArgs"),
-		   py::arg("fullPathToWorkingDir"));
+		   py::arg("fullPathToWorkingDir"), py::arg("blocking") = true);
 		   
 	m.def("GetCurrentVFSName", &PyGetCurrentVFSName);
 

@@ -492,7 +492,7 @@ class UserspaceVFS:
         self._ensure_active_instance()
         dll.ClearLibraryForceLoads()
 
-    def run_process(self, command_line, working_directory=os.getcwd()):
+    def run_process(self, command_line, working_directory=os.getcwd(), blocking=True):
         """
         Start a process (command line style) that is exposed the virtual filesystem.
 
@@ -503,6 +503,12 @@ class UserspaceVFS:
         :param working_directory: path to the intended working directory for the process (optional, default=os.getcwd())
         :type working_directory: str
 
+        :param blocking: whether this call should block execution until child process finishes (optional, default=True)
+        :type blocking: bool
+
+        :return: the Windows process id for the new process
+        :rtype: int
+
         :raises USVFSException: if usvfs failed to launch the process
         """
 
@@ -510,10 +516,13 @@ class UserspaceVFS:
 
         self._ensure_active_instance()
 
-        success = dll.CreateProcessHooked(command_line, working_directory)
+        pid = dll.CreateProcessHooked(command_line, working_directory, blocking)
 
-        if not success:
+        if not pid > 0:
+            # Return value 0 means we failed to start new process
             raise USVFSException('Failed to start process - try enabling debugging')
+        else:
+            return pid
 
     def get_active_processes(self):
         """
