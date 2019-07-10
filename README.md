@@ -14,15 +14,15 @@ However, usvfs was designed to also be usable as a standalone library. That's gr
 usvfs is written in C++. It needs to be, because it needs to perform low level tasks like hooking Windows API I/O function calls and injecting processes. I saw use in usvfs for some personal projects, but I usually prefer to work in higher level languages -- Python first and foremost. py-usvfs aims to make that possible.
 
 py-usvfs is two things:
-a. Python bindings for the usvfs dll functionality, in the form of a pybind11 CPython extension
-b. A Python wrapper module that provides convenient, hopefully more Pythonic abstractions for that low level functionality
+* (a) Python bindings for the usvfs dll functionality, in the form of a pybind11 CPython extension
+* (b) A Python wrapper module that provides convenient, hopefully more Pythonic abstractions for that low level functionality
 
 Basically, it's intended to allow to use usvfs in python (a) and make using it less of a pain (b).
 
 ### Can I use this in a production environment?
-Can you? Well, I'm not your mother. Should you? Probably not. usvfs is finicky, not always reliable and poorly documented. py-usvfs is no different. Caveat emptor.
+Can you? Well, I'm not your mother. Should you? Probably not. usvfs is finicky, not always reliable and poorly documented. py-usvfs is no different.
 
-py-usvfs is NOT properly tested. No guarantuee given that anything will work.
+py-usvfs is NOT properly tested. No guarantuee that anything will work.
 
 ## Requirements
 Because usvfs works by hooking Windows API I/O function calls, it only runs on Windows machines. Consequently, py-usvfs only runs on Windows as well.
